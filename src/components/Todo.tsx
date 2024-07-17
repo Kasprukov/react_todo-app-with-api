@@ -20,7 +20,9 @@ export const Todo: React.FC<Props> = ({
   const [newTitle, setNewTitle] = useState(todo.title);
 
   useEffect(() => {
-    fieldTitle.current?.focus();
+    if (isEdit) {
+      fieldTitle.current?.focus();
+    }
   }, [isEdit]);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export const Todo: React.FC<Props> = ({
     return () => {
       window.removeEventListener('keydown', handleEscape);
     };
-  }, [[]]);
+  }, [todo.title]);
 
   const handleOnChange = () => {
     onTodoUpdate({

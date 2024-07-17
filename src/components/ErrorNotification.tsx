@@ -19,7 +19,7 @@ export const ErrorNotification: React.FC<Props> = ({
       return () => clearTimeout(timerId);
     }
 
-    return undefined;
+    return;
   }, [errorMessage, setErrorMessage]);
 
   return (

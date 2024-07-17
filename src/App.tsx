@@ -8,6 +8,8 @@ import { Status } from './types/Status';
 import { Todo } from './types/Todo';
 import { USER_ID, deleteTodo, getTodos, updateTodo } from './api/todos';
 import { isAllTodosCompleted, getAllActiveTodos } from './utils/finder';
+import { ErrorMessages } from './types/ErrorMessages';
+import { filterTodosByStatus } from './utils/filterTodos';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -24,18 +26,13 @@ export const App: React.FC = () => {
   useEffect(() => {
     getTodos()
       .then(setTodos)
-      .catch(() => setErrorMessage('Unable to load todos'));
+      .catch(() => setErrorMessage(ErrorMessages.LOAD_TODOS));
   }, []);
 
-  const filteredTodos = useMemo(() => {
-    if (status === Status.All) {
-      return todos;
-    }
-
-    return todos.filter(todo =>
-      status === Status.Completed ? todo.completed : !todo.completed,
-    );
-  }, [status, todos]);
+  const filteredTodos = useMemo(
+    () => filterTodosByStatus(todos, status),
+    [status, todos],
+  );
 
   if (!USER_ID) {
     return <UserWarning />;
@@ -53,7 +50,7 @@ export const App: React.FC = () => {
         setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
         setProcessingTodos([]);
       })
-      .catch(() => setErrorMessage('Unable to delete a todo'))
+      .catch(() => setErrorMessage(ErrorMessages.DELETE_TODO))
       .finally(() => {
         fieldTitle.current?.focus();
       });
@@ -72,7 +69,7 @@ export const App: React.FC = () => {
                 prevTodos.filter(prevTodo => prevTodo.id !== todo.id),
               ),
             )
-            .catch(() => setErrorMessage('Unable to delete a todo'));
+            .catch(() => setErrorMessage(ErrorMessages.DELETE_TODO));
         }),
     ).then(() => {
       fieldTitle.current?.focus();
@@ -92,18 +89,18 @@ export const App: React.FC = () => {
         );
       })
       .catch(() => {
-        setErrorMessage('Unable to update a todo');
+        setErrorMessage(ErrorMessages.UPDATE_TODO);
         throw new Error();
       })
       .finally(() => setProcessingTodos([]));
   };
 
   const onChangeTodoStatus = () => {
-    const todoToToggle = todos.filter(
+    const toggledTodos = todos.filter(
       todo => todo.completed === isAllCompleted,
     );
 
-    todoToToggle.map(todo => {
+    toggledTodos.map(todo => {
       return onTodoUpdate({
         ...todo,
         completed: !isAllCompleted,

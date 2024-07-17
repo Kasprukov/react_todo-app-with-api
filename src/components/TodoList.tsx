@@ -2,6 +2,7 @@ import React from 'react';
 import { Todo as TodoType } from '../types/Todo';
 import { Todo } from './Todo';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   todos: TodoType[];
@@ -10,6 +11,8 @@ type Props = {
   processingTodos: number[];
   onTodoUpdate: (todo: TodoType) => Promise<void>;
 };
+
+const transitionTimeout = 300;
 
 export const TodoList: React.FC<Props> = ({
   todos,
@@ -22,7 +25,11 @@ export const TodoList: React.FC<Props> = ({
     <section className="todoapp__main" data-cy="TodoList">
       <TransitionGroup>
         {todos.map(todo => (
-          <CSSTransition key={todo.id} timeout={300} classNames="item">
+          <CSSTransition
+            key={todo.id}
+            timeout={transitionTimeout}
+            classNames="item"
+          >
             <Todo
               todo={todo}
               onDelete={onDelete}
@@ -33,7 +40,11 @@ export const TodoList: React.FC<Props> = ({
         ))}
 
         {tempTodo && (
-          <CSSTransition key={0} timeout={300} classNames="item">
+          <CSSTransition
+            key={uuidv4()}
+            timeout={transitionTimeout}
+            classNames="item"
+          >
             <Todo
               todo={tempTodo}
               onDelete={onDelete}

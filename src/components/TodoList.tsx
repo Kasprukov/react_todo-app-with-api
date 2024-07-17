@@ -2,7 +2,6 @@ import React from 'react';
 import { Todo as TodoType } from '../types/Todo';
 import { Todo } from './Todo';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import { v4 as uuidv4 } from 'uuid';
 
 type Props = {
   todos: TodoType[];
@@ -40,11 +39,7 @@ export const TodoList: React.FC<Props> = ({
         ))}
 
         {tempTodo && (
-          <CSSTransition
-            key={uuidv4()}
-            timeout={transitionTimeout}
-            classNames="item"
-          >
+          <CSSTransition key={0} timeout={transitionTimeout} classNames="item">
             <Todo
               todo={tempTodo}
               onDelete={onDelete}
